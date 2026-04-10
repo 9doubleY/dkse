@@ -45,6 +45,13 @@ def load_data():
     # 현재 스크립트 앱(app_dashboard.py)이 실행된 위치를 기준으로 같은 폴더 내의 CSV 파일 조회
     base_dir = os.path.dirname(os.path.abspath(__file__))
     csv_path = os.path.join(base_dir, '지역축제_2023_2026_최종분석용_추가파생.csv')
+    
+    if not os.path.exists(csv_path):
+        st.error(f"🚨 CSV 파일을 찾을 수 없습니다! Github에 파일 업로드가 누락되었거나 이름이 잘못되었습니다.")
+        st.info(f"📁 현재 서버 폴더({base_dir})에 업로드된 파일 목록은 아래와 같습니다:")
+        st.write(os.listdir(base_dir))
+        st.stop()
+        
     df = pd.read_csv(csv_path)
     # 데이터 정리: 숫자형이 아닌 쉼표 포함 문자열 등을 위해 강제 매핑 및 클렌징은 이미 파생파일에서 진행됨
     # 그러나 NaN 처리 등 시각화 시 오류 방지를 위해 0 보간
@@ -341,3 +348,4 @@ with tab6:
     
 st.markdown("---")
 st.markdown("Made with ✨ Streamlit & Plotly by Antigravity AI")
+
