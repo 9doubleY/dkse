@@ -38,9 +38,13 @@ st.markdown("""
 # ------------------------------------------------------------------
 # 2. 데이터 로드 로직 (캐싱 적용을 통해 속도 향상)
 # ------------------------------------------------------------------
+import os
+
 @st.cache_data
 def load_data():
-    csv_path = '/Users/g-goubley/Desktop/2nd Project/민섭님자료/지역축제_2023_2026_최종분석용_추가파생.csv'
+    # 현재 스크립트 앱(app_dashboard.py)이 실행된 위치를 기준으로 같은 폴더 내의 CSV 파일 조회
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(base_dir, '지역축제_2023_2026_최종분석용_추가파생.csv')
     df = pd.read_csv(csv_path)
     # 데이터 정리: 숫자형이 아닌 쉼표 포함 문자열 등을 위해 강제 매핑 및 클렌징은 이미 파생파일에서 진행됨
     # 그러나 NaN 처리 등 시각화 시 오류 방지를 위해 0 보간
