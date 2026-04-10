@@ -35,18 +35,25 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ------------------------------------------------------------------
-# 2. 데이터 로드 로직 (캐싱 적용을 통해 속도 향상)
-# ------------------------------------------------------------------
 import os
+import unicodedata
 
 @st.cache_data
 def load_data():
     # 현재 스크립트 앱(app_dashboard.py)이 실행된 위치를 기준으로 같은 폴더 내의 CSV 파일 조회
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    csv_path = os.path.join(base_dir, '지역축제_2023_2026_최종분석용_추가파생.csv')
     
-    if not os.path.exists(csv_path):
+    # macOS(NFD)와 Linux/Windows(NFC) 간의 한글 자음/모음 분리 문제 해결
+    target_filename = '지역축제_2023_2026_최종분석용_추가파생.csv'
+    target_nfc = unicodedata.normalize('NFC', target_filename)
+    
+    csv_path = None
+    for f in os.listdir(base_dir):
+        if unicodedata.normalize('NFC', f) == target_nfc:
+            csv_path = os.path.join(base_dir, f)
+            break
+    
+    if csv_path is None or not os.path.exists(csv_path):
         st.error(f"🚨 CSV 파일을 찾을 수 없습니다! Github에 파일 업로드가 누락되었거나 이름이 잘못되었습니다.")
         st.info(f"📁 현재 서버 폴더({base_dir})에 업로드된 파일 목록은 아래와 같습니다:")
         st.write(os.listdir(base_dir))
@@ -348,4 +355,3 @@ with tab6:
     
 st.markdown("---")
 st.markdown("Made with ✨ Streamlit & Plotly by Antigravity AI")
-
